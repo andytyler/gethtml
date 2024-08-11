@@ -2,9 +2,17 @@
 import type { Browser, Page } from "puppeteer";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
-import { BROWSERLESS_API_KEY } from "$env/static/private";
-import { NODE_ENV } from "$env/static/private";
-import { HEADLESS } from "$env/static/private";
+
+import { config } from "dotenv";
+config();
+
+const { BROWSER_SERVICE, BROWSERBASE_API_KEY, BROWSERLESS_API_KEY, NODE_ENV, HEADLESS } = process.env;
+
+export let browserless_ws_endpoint = BROWSERLESS_API_KEY ? `wss://chrome.browserless.io?token=${BROWSERLESS_API_KEY}&stealth&--window-size=430,932` : "";
+export let browserbase_ws_endpoint = BROWSERBASE_API_KEY ? `wss://chrome.browserless.io?token=${BROWSERBASE_API_KEY}&stealth&--window-size=430,932` : "";
+
+const ws_endpoint =
+	BROWSER_SERVICE === "browserless" ? browserless_ws_endpoint : BROWSER_SERVICE === "browserbase" ? browserbase_ws_endpoint : browserbase_ws_endpoint;
 // import { HttpsProxyAgent } from 'https-proxy-agent';
 
 // // puppeteer-extra is a drop-in replacement for puppeteer,
@@ -39,8 +47,8 @@ export async function initStealthPuppeteer(headless: boolean = true): Promise<{ 
 		// console.log('BROWSERLESS_API_KEY', NODE_ENV);
 
 		browser = IS_PRODUCTION
-			? // Connect to browserless so we don't run Chrome on the same hardware in production
-			  await puppeteer.connect({ browserWSEndpoint: `wss://chrome.browserless.io?token=${BROWSERLESS_API_KEY}&stealth&--window-size=430,932` })
+			? // Connect to browserless in production
+			  await puppeteer.connect({ browserWSEndpoint: ws_endpoint })
 			: // Run the browser locally while in development
 			  puppeteer.use(StealthPlugin()) && (await puppeteer.launch(puppeteerOptions));
 		//   await puppeteer.connect({ browserWSEndpoint: `wss://chrome.browserless.io?token=${BROWSERLESS_API_KEY}` });

@@ -1,11 +1,22 @@
 {
-  "name": "gethtml",
-  "version": "1.0.0",
-  "description": "utility for web scraping and fetching the html from a url or using puppeteer to interact with the page. getHtml uses various strategies in a 'waterfall' approch to get the content of the url, depending on priorities, such as stealth, speed, freshness.",
-  "main": "logic.ts",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "andytyler",
-  "license": "ISC"
+	"name": "waterfall-fetch",
+	"version": "1.0.0",
+	"description": "utility for web scraping and fetching the html from a url or using puppeteer to interact with the page. getHtml uses various strategies in a 'waterfall' approch to get the content of the url, depending on priorities, such as stealth, speed, freshness.",
+	"main": "logic.ts",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "andytyler",
+	"type": "module",
+	"git": "https://github.com/andytyler/getHtml",
+	"license": "ISC",
+	"dependencies": {
+		"axios": "^1.7.3",
+		"dotenv": "^16.4.5",
+		"node-fetch": "^3.3.2",
+		"node-html-parser": "^6.1.13",
+		"puppeteer": "^23.0.2",
+		"puppeteer-extra": "^3.3.6",
+		"puppeteer-extra-plugin-stealth": "^2.11.2"
+	}
 }

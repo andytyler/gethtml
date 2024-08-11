@@ -1,9 +1,7 @@
-import axios from 'axios';
-import fetch from 'node-fetch';
-import { initStealthPuppeteer } from './actions';
-import type { Page } from 'puppeteer';
-import type { AgentConfig } from '../configs';
-import { getConfigByDomainWithUrl } from '../utils/configs';
+import axios from "axios";
+import fetch from "node-fetch";
+import { initStealthPuppeteer } from "./actions";
+import type { Page } from "puppeteer";
 
 export type StrategyResponse = {
 	success: boolean;
@@ -19,7 +17,7 @@ export type FetchStrategy = {
 	cost: number;
 };
 
-export type OnPageEvaluationFunction = (page: Page, agent_config?: AgentConfig) => Promise<any>;
+export type OnPageEvaluationFunction = (page: Page) => Promise<any>;
 
 /**
  * The function fetches data from a specified URL using the Axios library in TypeScript and returns a
@@ -30,15 +28,14 @@ export type OnPageEvaluationFunction = (page: Page, agent_config?: AgentConfig) 
  * object.
  */
 export async function fetchWithAxios(url: string): Promise<StrategyResponse> {
-	const strategy: FetchStrategy = { name: 'axios', cost: 0 };
+	const strategy: FetchStrategy = { name: "axios", cost: 0 };
 	const headers = {
-		Authorization: 'Bearer 789574hh9s__f9b8y3bfalfn[]ff9whuefewjibf822+3++=555wbi3b3juuu',
-		'Content-Type': 'application/json',
-		accept: '*/*',
-		'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36',
-		referer: 'https://www.bing.co.uk',
-		cookie:
-			'DSID=AAO-7r4OSkS76zbHUkiOpnI0kk-X19BLDFF53G8gbnd21VZV2iehu-w_2v14cxvRvrkd_NjIdBWX7wUiQ66f-D8kOkTKD1BhLVlqrFAaqDP3LodRK2I0NfrObmhV9HsedGE7-mQeJpwJifSxdchqf524IMh9piBflGqP0Lg0_xjGmLKEQ0F4Na6THgC06VhtUG5infEdqMQ9otlJENe3PmOQTC_UeTH5DnENYwWC8KXs-M4fWmDADmG414V0_X0TfjrYu01nDH2Dcf3TIOFbRDb993g8nOCswLMi92LwjoqhYnFdf1jzgK0',
+		Authorization: "Bearer 789574hh9s__f9b8y3bfalfn[]ff9whuefewjibf822+3++=555wbi3b3juuu",
+		"Content-Type": "application/json",
+		accept: "*/*",
+		"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36",
+		referer: "https://www.bing.co.uk",
+		cookie: "DSID=AAO-7r4OSkS76zbHUkiOpnI0kk-X19BLDFF53G8gbnd21VZV2iehu-w_2v14cxvRvrkd_NjIdBWX7wUiQ66f-D8kOkTKD1BhLVlqrFAaqDP3LodRK2I0NfrObmhV9HsedGE7-mQeJpwJifSxdchqf524IMh9piBflGqP0Lg0_xjGmLKEQ0F4Na6THgC06VhtUG5infEdqMQ9otlJENe3PmOQTC_UeTH5DnENYwWC8KXs-M4fWmDADmG414V0_X0TfjrYu01nDH2Dcf3TIOFbRDb993g8nOCswLMi92LwjoqhYnFdf1jzgK0",
 	};
 
 	try {
@@ -63,7 +60,7 @@ export async function fetchWithAxios(url: string): Promise<StrategyResponse> {
  * object.
  */
 export async function fetchWithNodeFetch(url: string): Promise<StrategyResponse> {
-	const strategy: FetchStrategy = { name: 'node-fetch', cost: 0 };
+	const strategy: FetchStrategy = { name: "node-fetch", cost: 0 };
 	try {
 		const response = await fetch(url);
 		if (!response.ok) {
@@ -85,7 +82,7 @@ export async function fetchWithNodeFetch(url: string): Promise<StrategyResponse>
  */
 export async function fetchWithStealthPuppeteer(url: string, onPageEvaluationFunction?: OnPageEvaluationFunction): Promise<StrategyResponse> {
 	// const log = new Logger() //
-	const strategy: FetchStrategy = { name: 'stealth-puppeteer', cost: 0 };
+	const strategy: FetchStrategy = { name: "stealth-puppeteer", cost: 0 };
 	let stealth_browser: any = null;
 	try {
 		// this is where youy can turn off the headless mode
@@ -93,17 +90,16 @@ export async function fetchWithStealthPuppeteer(url: string, onPageEvaluationFun
 		if (error) return { success: false, strategy, html: null, error, status: null };
 		if (!stealth_browser || !page) {
 			if (stealth_browser) await stealth_browser.close();
-			return { success: false, strategy, html: null, error: new Error('No browser OR, no page when loading stealth puppeteer.'), status: null };
+			return { success: false, strategy, html: null, error: new Error("No browser OR, no page when loading stealth puppeteer."), status: null };
 		}
 
 		console.log(`[STEALTH PUPPETEER] ${url}`);
-		const http_response = await page.goto(url, { waitUntil: 'domcontentloaded' });
-		console.log('[STEALTH PUPPETEER] domcontentloaded');
+		const http_response = await page.goto(url, { waitUntil: "domcontentloaded" });
+		console.log("[STEALTH PUPPETEER] domcontentloaded");
 		const status = http_response ? http_response.status() : null;
 
 		if (onPageEvaluationFunction) {
-			const agent_config = getConfigByDomainWithUrl(url) as AgentConfig;
-			const evaluation_result = await onPageEvaluationFunction(page, agent_config || null);
+			const evaluation_result = await onPageEvaluationFunction(page);
 			const html = await page.content();
 			await stealth_browser.close();
 			return { success: true, strategy, html, error: null, evaluation_result, status } as StrategyResponse;
