@@ -1,6 +1,6 @@
 {
 	"name": "waterfall-fetch",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "utility for web scraping and fetching the html from a url or using puppeteer to interact with the page. getHtml uses various strategies in a 'waterfall' approch to get the content of the url, depending on priorities, such as stealth, speed, freshness.",
 	"main": "logic.ts",
 	"scripts": {
@@ -9,6 +9,7 @@
 	"author": "andytyler",
 	"type": "module",
 	"git": "https://github.com/andytyler/getHtml",
+	"homepage": "https://waterfetcher.mintlify.app/",
 	"license": "ISC",
 	"dependencies": {
 		"axios": "^1.7.3",
