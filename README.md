@@ -1,6 +1,6 @@
 # 🌊 Waterfall-Fetch
 
-A powerful and flexible utility for web scraping and HTML fetching, employing a waterfall approach with multiple strategies.
+A powerful and flexible utility for web scraping and HTML fetching, employing a cascading retry approach with multiple strategies.
 
 [![npm version](https://badge.fury.io/js/waterfall-fetch.svg)](https://badge.fury.io/js/waterfall-fetch)
 [![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
