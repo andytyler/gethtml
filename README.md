@@ -7,6 +7,8 @@ A powerful and flexible utility for web scraping and HTML fetching, employing a 
 
 # 🚀 Quick Start
 
+[View the full docs](https://waterfetcher.mintlify.app/)
+
 ## 📦 Installation
 
 ```bash
