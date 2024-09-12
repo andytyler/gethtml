@@ -1,6 +1,6 @@
 {
 	"name": "waterfall-fetch",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"description": "utility for web scraping and fetching the html from a url or using puppeteer to interact with the page. getHtml uses various strategies in a 'waterfall' approch to get the content of the url, depending on priorities, such as stealth, speed, freshness.",
 	"main": "logic.ts",
 	"scripts": {
