@@ -1,7 +1,7 @@
 import axios from "axios";
 import fetch from "node-fetch";
-import { initStealthPuppeteer } from "./actions";
 import type { Page } from "puppeteer";
+import { initStealthPuppeteer } from "./actions";
 
 export type StrategyResponse = {
 	success: boolean;
@@ -10,6 +10,7 @@ export type StrategyResponse = {
 	evaluation_result?: any;
 	error: unknown | string | Error | null;
 	status: number | null;
+	page?: Page; // Add this line
 };
 
 export type FetchStrategy = {
@@ -80,37 +81,65 @@ export async function fetchWithNodeFetch(url: string): Promise<StrategyResponse>
  * @returns The function `fetchWithStealthPuppeteer` returns a Promise that resolves to a
  * `StrategyResponse` object.
  */
-export async function fetchWithStealthPuppeteer(url: string, onPageEvaluationFunction?: OnPageEvaluationFunction): Promise<StrategyResponse> {
-	// const log = new Logger() //
+export async function fetchWithStealthPuppeteer(url: string, evalFunction?: OnPageEvaluationFunction, keepBrowserOpen?: boolean): Promise<StrategyResponse> {
 	const strategy: FetchStrategy = { name: "stealth-puppeteer", cost: 0 };
 	let stealth_browser: any = null;
+	let page: Page | null = null;
+
 	try {
-		// this is where youy can turn off the headless mode
-		const { browser: stealth_browser, page, error } = await initStealthPuppeteer(true);
+		const { browser: stealth_browser, page: initialPage, error } = await initStealthPuppeteer(true);
 		if (error) return { success: false, strategy, html: null, error, status: null };
-		if (!stealth_browser || !page) {
+		if (!stealth_browser || !initialPage) {
 			if (stealth_browser) await stealth_browser.close();
-			return { success: false, strategy, html: null, error: new Error("No browser OR, no page when loading stealth puppeteer."), status: null };
+			return {
+				success: false,
+				strategy,
+				html: null,
+				error: new Error("No browser OR, no page when loading stealth puppeteer."),
+				status: null,
+			};
 		}
+
+		page = initialPage;
 
 		console.log(`[STEALTH PUPPETEER] ${url}`);
 		const http_response = await page.goto(url, { waitUntil: "domcontentloaded" });
 		console.log("[STEALTH PUPPETEER] domcontentloaded");
 		const status = http_response ? http_response.status() : null;
 
-		if (onPageEvaluationFunction) {
-			const evaluation_result = await onPageEvaluationFunction(page);
-			const html = await page.content();
-			await stealth_browser.close();
-			return { success: true, strategy, html, error: null, evaluation_result, status } as StrategyResponse;
+		let evaluation_result;
+		if (evalFunction) {
+			evaluation_result = await evalFunction(page);
 		}
 
 		const html = await page.content();
-		await stealth_browser.close();
-		return { success: true, strategy, html, error: null, status } as StrategyResponse;
+
+		if (!keepBrowserOpen) {
+			await stealth_browser.close();
+			page = null;
+		}
+
+		return {
+			success: true,
+			strategy,
+			html,
+			error: null,
+			evaluation_result,
+			status,
+			page: keepBrowserOpen ? page : undefined,
+		} as StrategyResponse;
 	} catch (error) {
-		if (stealth_browser) await stealth_browser.close();
-		return { success: false, strategy, html: null, error, status: null } as StrategyResponse;
+		if (!keepBrowserOpen && stealth_browser) {
+			await stealth_browser.close();
+		}
+		return {
+			success: false,
+			strategy,
+			html: null,
+			error,
+			status: null,
+			page: keepBrowserOpen ? page : undefined,
+		} as StrategyResponse;
 	}
 }
 
