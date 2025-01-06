@@ -4,8 +4,13 @@ A powerful and flexible utility for web scraping and HTML fetching, employing a 
 
 [![npm version](https://badge.fury.io/js/waterfall-fetch.svg)](https://badge.fury.io/js/waterfall-fetch)
 [![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
+[![Mintlify](https://img.shields.io/badge/Docs-Mintlify-blue)](https://waterfetcher.mintlify.app/)
+[![GitHub](https://img.shields.io/badge/GitHub-andytyler-blue)](https://github.com/andytyler/gethtml)
+[![Twitter](https://img.shields.io/badge/Twitter-@andytyler-blue)](https://twitter.com/andytyler)
 
-# 🚀 Quick Start
+![Waterfall-Fetch Hero Image](./hero-dark.png)
+
+## 🚀 Quick Start
 
 [View the full docs](https://waterfetcher.mintlify.app/)
 
