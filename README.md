@@ -3,7 +3,7 @@
 A powerful and flexible utility for web scraping and HTML fetching, employing a cascading retry approach with multiple strategies.
 
 [![npm version](https://badge.fury.io/js/waterfall-fetch.svg)](https://badge.fury.io/js/waterfall-fetch)
-[![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Mintlify](https://img.shields.io/badge/Docs-Mintlify-blue)](https://waterfetcher.mintlify.app/)
 [![GitHub](https://img.shields.io/badge/GitHub-andytyler-blue)](https://github.com/andytyler/gethtml)
 [![Twitter](https://img.shields.io/badge/Twitter-@andytyler-blue)](https://twitter.com/andytyler)
@@ -180,7 +180,7 @@ Contributions, issues, and feature requests are welcome! Feel free to check [iss
 
 ## 📝 License
 
-This project is [ISC](https://opensource.org/licenses/ISC) licensed.
+This project is [MIT](https://opensource.org/licenses/MIT) licensed.
 
 ## 🙏 Acknowledgements
 
