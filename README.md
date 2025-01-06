@@ -188,4 +188,4 @@ This project is [ISC](https://opensource.org/licenses/ISC) licensed.
 Made with ❤️ by [andytyler](https://github.com/andytyler) in the UK 🇬🇧.
 
 GitHub: [@andytyler](https://github.com/andytyler)
-Repo: [waterfall-fetch](https://github.com/andytyler/waterfall-fetch)
+Repo: [gethtml](https://github.com/andytyler/gethtml)

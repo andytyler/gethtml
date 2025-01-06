@@ -1,6 +1,7 @@
 {
-	"name": "waterfall-fetch",
+	"name": "@andytyler/waterfall-fetch",
 	"version": "1.0.6",
+	"private": false,
 	"description": "utility for web scraping and fetching the html from a url or using puppeteer to interact with the page. getHtml uses various strategies in a 'waterfall' approch to get the content of the url, depending on priorities, such as stealth, speed, freshness.",
 	"main": "logic.ts",
 	"scripts": {
@@ -23,5 +24,21 @@
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/andytyler/getHtml.git"
+	},
+	"publishConfig": {
+		"registry": "https://npm.pkg.github.com"
+	},
+	"keywords": [
+		"web-scraping",
+		"puppeteer",
+		"html",
+		"nodejs",
+		"fetch",
+		"axios",
+		"web-automation",
+		"stealth-scraping"
+	],
+	"bugs": {
+		"url": "https://github.com/andytyler/getHtml/issues"
 	}
 }
