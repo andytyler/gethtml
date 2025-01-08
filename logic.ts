@@ -7,6 +7,7 @@ import {
 	type OnPageEvaluationFunction,
 	type StrategyResponse,
 } from "./strategies";
+import { formatUrl } from "./utils";
 
 export type NodeHTMLElement = HTMLElement;
 
@@ -18,7 +19,8 @@ export type HtmlResponse = {
 	strategy: FetchStrategy;
 	error?: Error | null | string | unknown;
 	status?: number | string | null;
-	page?: any; // Add this line
+	page?: any;
+	url?: string;
 };
 
 export type FetchStrategyFunction = (url: string, evalFunction?: OnPageEvaluationFunction, keepBrowserOpen?: boolean) => Promise<StrategyResponse>;
@@ -28,28 +30,46 @@ export default async function getHtml(
 	options?: {
 		set: "cheap" | "js" | null;
 		evalFunction?: OnPageEvaluationFunction;
-		keepBrowserOpen?: boolean; // Add this line
+		keepBrowserOpen?: boolean;
 	}
 ): Promise<HtmlResponse> {
-	let { set, evalFunction, keepBrowserOpen } = options || { set: null, evalFunction: null, keepBrowserOpen: false };
+	let { set, evalFunction, keepBrowserOpen } = options || {
+		set: null,
+		evalFunction: null,
+		keepBrowserOpen: false,
+	};
 
-	let strategy_set: FetchStrategyFunction[] = [fetchWithAxios, fetchWithNodeFetch, fetchWithStealthPuppeteer];
-	if (evalFunction) set = "js";
-	if (set === "cheap") strategy_set = [fetchWithAxios, fetchWithNodeFetch];
-	if (set === "js") strategy_set = [fetchWithStealthPuppeteer];
+	try {
+		// Format the URL using default options
+		const formattedUrl = formatUrl(url);
 
-	for (const strategyFunction of strategy_set) {
-		const { success, html, strategy, evaluation_result, error, status, page }: StrategyResponse = evalFunction
-			? await strategyFunction(url, evalFunction, keepBrowserOpen)
-			: await strategyFunction(url, undefined, keepBrowserOpen);
-		if (error) console.error(error);
-		console.log(`getHTML: [${strategy.name}] [${status}] [${success}] [${html?.length}] [${url}]`);
+		let strategy_set: FetchStrategyFunction[] = [fetchWithAxios, fetchWithNodeFetch, fetchWithStealthPuppeteer];
+		if (evalFunction) set = "js";
+		if (set === "cheap") strategy_set = [fetchWithAxios, fetchWithNodeFetch];
+		if (set === "js") strategy_set = [fetchWithStealthPuppeteer];
 
-		if (!success || !html) continue;
+		for (const strategyFunction of strategy_set) {
+			const { success, html, strategy, evaluation_result, error, status, page }: StrategyResponse = evalFunction
+				? await strategyFunction(formattedUrl, evalFunction, keepBrowserOpen)
+				: await strategyFunction(formattedUrl, undefined, keepBrowserOpen);
+			if (error) console.error(error);
+			console.log(`getHTML: [${strategy.name}] [${status}] [${success}] [${html?.length}] [${formattedUrl}]`);
 
-		const root: NodeHTMLElement = parse(html);
+			if (!success || !html) continue;
 
-		return { success, html, root, strategy, evaluation_result, error, status, page: keepBrowserOpen ? page : undefined };
+			const root: NodeHTMLElement = parse(html);
+
+			return { success, html, root, strategy, evaluation_result, error, status, page: keepBrowserOpen ? page : undefined };
+		}
+		return { success: false, html: null, strategy: { name: "unknown", cost: 0 }, page: undefined };
+	} catch (error) {
+		return {
+			success: false,
+			html: null,
+			strategy: { name: "unknown", cost: 0 },
+			error,
+			page: undefined,
+			url: url,
+		};
 	}
-	return { success: false, html: null, strategy: { name: "unknown", cost: 0 }, page: undefined };
 }
