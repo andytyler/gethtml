@@ -9,7 +9,7 @@ config();
 const { BROWSER_SERVICE, BROWSERBASE_API_KEY, BROWSERLESS_API_KEY, NODE_ENV, HEADLESS } = process.env;
 
 export let browserless_ws_endpoint = BROWSERLESS_API_KEY ? `wss://chrome.browserless.io?token=${BROWSERLESS_API_KEY}&stealth&--window-size=430,932` : "";
-export let browserbase_ws_endpoint = BROWSERBASE_API_KEY ? `wss://chrome.browserless.io?token=${BROWSERBASE_API_KEY}&stealth&--window-size=430,932` : "";
+export let browserbase_ws_endpoint = BROWSERBASE_API_KEY ? `wss://connect.browserbase.com?apiKey=${BROWSERBASE_API_KEY}` : "";
 
 const ws_endpoint =
 	BROWSER_SERVICE === "browserless" ? browserless_ws_endpoint : BROWSER_SERVICE === "browserbase" ? browserbase_ws_endpoint : browserbase_ws_endpoint;
