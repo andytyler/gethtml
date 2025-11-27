@@ -13,11 +13,11 @@
 	"homepage": "https://waterfetcher.mintlify.app/",
 	"license": "MIT",
 	"dependencies": {
-		"axios": "^1.7.3",
-		"dotenv": "^16.4.5",
+		"axios": "^1.13.2",
+		"dotenv": "^17.2.3",
 		"node-fetch": "^3.3.2",
-		"node-html-parser": "^6.1.13",
-		"puppeteer": "^23.0.2",
+		"node-html-parser": "^7.0.1",
+		"puppeteer": "^24.31.0",
 		"puppeteer-extra": "^3.3.6",
 		"puppeteer-extra-plugin-stealth": "^2.11.2"
 	},

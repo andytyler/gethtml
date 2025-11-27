@@ -82,11 +82,11 @@ The module attempts each strategy in order until successful or all fail.
 Set these in your `.env` file or deployment environment:
 
 ``` text
-BROWSER_SERVICE=browserless
 BROWSERBASE_API_KEY=your_browserbase_api_key
-BROWSERLESS_API_KEY=your_browserless_api_key
 NODE_ENV=production
 HEADLESS=on
+BROWSER_SERVICE=browserless
+BROWSERLESS_API_KEY=your_browserless_api_key
 ```
 
 ## 🌟 Why Waterfall-Fetch?
