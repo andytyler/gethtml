@@ -3,10 +3,14 @@ import {
 	fetchWithAxios,
 	fetchWithNodeFetch,
 	fetchWithStealthPuppeteer,
+	fetchWithZenrowsProxy,
+	fetchWithZenrowsPuppeteer,
 	type FetchStrategy,
 	type OnPageEvaluationFunction,
 	type StrategyResponse,
 } from "./strategies";
+
+export { fetchWithAxios, fetchWithNodeFetch, fetchWithStealthPuppeteer, fetchWithZenrowsProxy, fetchWithZenrowsPuppeteer };
 import { formatUrl } from "./utils";
 
 export type NodeHTMLElement = HTMLElement;
@@ -28,7 +32,7 @@ export type FetchStrategyFunction = (url: string, evalFunction?: OnPageEvaluatio
 export default async function getHtml(
 	url: string,
 	options?: {
-		set: "cheap" | "js" | null;
+		set: "cheap" | "js" | "proxy" | null;
 		evalFunction?: OnPageEvaluationFunction;
 		keepBrowserOpen?: boolean;
 	}
@@ -47,6 +51,7 @@ export default async function getHtml(
 		if (evalFunction) set = "js";
 		if (set === "cheap") strategy_set = [fetchWithAxios, fetchWithNodeFetch];
 		if (set === "js") strategy_set = [fetchWithStealthPuppeteer];
+		if (set === "proxy") strategy_set = [fetchWithZenrowsProxy, fetchWithZenrowsPuppeteer];
 
 		for (const strategyFunction of strategy_set) {
 			const { success, html, strategy, evaluation_result, error, status, page }: StrategyResponse = evalFunction

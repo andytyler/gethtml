@@ -50,7 +50,7 @@ Fetches HTML content from the specified URL using various strategies. The respon
 
 - `url`: The URL to fetch
 - `options` (optional):
-  - `set`: Strategy set to use ('cheap', 'js', or null)
+  - `set`: Strategy set to use ('cheap', 'js', 'proxy', or null)
   - `evalFunction`: Custom evaluation function for Puppeteer
 
 #### Returns
@@ -74,6 +74,8 @@ type HtmlResponse = {
 1. **Axios**: Fast and lightweight HTTP client
 2. **Node-fetch**: Simple and modern fetch API for Node.js
 3. **Stealth Puppeteer**: Headless browser for JavaScript-heavy sites
+4. **ZenRows Proxy**: Axios request through ZenRows residential proxy
+5. **ZenRows Puppeteer**: Stealth Puppeteer with ZenRows residential proxy
 
 The module attempts each strategy in order until successful or all fail.
 
@@ -87,6 +89,8 @@ NODE_ENV=production
 HEADLESS=on
 BROWSER_SERVICE=browserless
 BROWSERLESS_API_KEY=your_browserless_api_key
+ZENROWS_USERNAME=your_zenrows_username
+ZENROWS_PASSWORD=your_zenrows_password
 ```
 
 ## 🌟 Why Waterfall-Fetch?
@@ -101,17 +105,18 @@ The waterfall method starts with the **fastest and most cost-effective strategy*
 
 If the initial attempt fails, Waterfall-Fetch seamlessly transitions to more **robust methods**, ensuring you ultimately receive the HTML from the target URL.
 
-There are 2 built in strategy sets
+There are 3 built in strategy sets
 
 1. **Cheap Set**: Optimized for cost-effectiveness and speed
    - Axios
    - Node-fetch
-   - Puppeteer (as a last resort)
 
 2. **JS Set**: Designed for JavaScript-heavy websites (slower, but more accurate)
    - Puppeteer (with stealth mode)
-   - Axios (as a fallback)
-   - Node-fetch (as a final attempt)
+
+3. **Proxy Set**: Uses ZenRows residential proxies for sites that block datacenter IPs
+   - ZenRows Proxy (Axios with residential proxy)
+   - ZenRows Puppeteer (Stealth Puppeteer with residential proxy)
 
 Each set is tailored to specific use cases, allowing you to choose the most appropriate strategy for your scraping needs.
 
@@ -119,9 +124,10 @@ You can also use a custom set of strategies, from the existing set or pass in yo
 
 ## 🚀 Features
 
-- Multiple fetching strategies (Axios, Node-fetch, Puppeteer)
+- Multiple fetching strategies (Axios, Node-fetch, Puppeteer, ZenRows)
 - Waterfall approach for optimal content retrieval
 - Stealth mode using Puppeteer for JavaScript-heavy sites
+- ZenRows residential proxy support for bypassing IP blocks
 - Customizable strategy prioritization
 - Built-in error handling and logging
 - TypeScript support
@@ -135,12 +141,12 @@ To create a custom set of strategies for fetching HTML, you can pass an array of
 Here's how you can define and use a custom set:
 
 ```typescript
-import getHtml, { fetchWithAxios, fetchWithNodeFetch, fetchWithStealthPuppeteer } from 'waterfall-fetch';
+import getHtml, { fetchWithAxios, fetchWithNodeFetch, fetchWithStealthPuppeteer, fetchWithZenrowsProxy, fetchWithZenrowsPuppeteer } from 'waterfall-fetch';
 
 const url = 'https://example.com';
 
 // Define a custom set of strategies
-const customSet = [fetchWithNodeFetch, fetchWithAxios, fetchWithStealthPuppeteer];
+const customSet = [fetchWithNodeFetch, fetchWithAxios, fetchWithZenrowsProxy];
 
 // Use the custom set
 const result = await getHtml(url, { set: customSet });
@@ -187,6 +193,7 @@ This project is [MIT](https://opensource.org/licenses/MIT) licensed.
 - [Puppeteer](https://pptr.dev/)
 - [Axios](https://axios-http.com/)
 - [Node-fetch](https://github.com/node-fetch/node-fetch)
+- [ZenRows](https://www.zenrows.com/)
 
 ---
 

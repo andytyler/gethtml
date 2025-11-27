@@ -6,7 +6,7 @@ import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { config } from "dotenv";
 config();
 
-const { BROWSER_SERVICE, BROWSERBASE_API_KEY, BROWSERLESS_API_KEY, NODE_ENV, HEADLESS } = process.env;
+const { BROWSER_SERVICE, BROWSERBASE_API_KEY, BROWSERLESS_API_KEY, NODE_ENV, HEADLESS, ZENROWS_USERNAME, ZENROWS_PASSWORD } = process.env;
 
 // export let browserless_ws_endpoint = BROWSERLESS_API_KEY ? `wss://chrome.browserless.io?token=${BROWSERLESS_API_KEY}&stealth&--window-size=430,932` : "";
 export let browserbase_ws_endpoint = BROWSERBASE_API_KEY ? `wss://connect.browserbase.com?apiKey=${BROWSERBASE_API_KEY}` : "";
@@ -89,6 +89,71 @@ export async function initStealthPuppeteer(headless: boolean = true): Promise<{ 
 	// }
 	// }
 	return { browser, page };
+}
+
+// ZenRows proxy config
+export const ZENROWS_PROXY_HOST = "superproxy.zenrows.com";
+export const ZENROWS_PROXY_PORT = 1337;
+
+export async function initZenrowsPuppeteer(headless: boolean = true): Promise<{ browser: Browser | null; page: Page | null; error?: Error | unknown | null }> {
+	let browser: Browser | null = null;
+	let page: Page | null = null;
+	const SHOW_PUPPETEER = HEADLESS === "off" ? false : headless;
+
+	if (!ZENROWS_USERNAME || !ZENROWS_PASSWORD) {
+		return { browser: null, page: null, error: new Error("ZENROWS_USERNAME and ZENROWS_PASSWORD must be set") };
+	}
+
+	const puppeteerOptions = {
+		ignoreHTTPSErrors: true,
+		timeout: 60000,
+		headless: SHOW_PUPPETEER,
+		handleSIGINT: false,
+		handleSIGTERM: false,
+		handleSIGHUP: false,
+		args: [`--proxy-server=${ZENROWS_PROXY_HOST}:${ZENROWS_PROXY_PORT}`, "--disable-gpu", "--no-sandbox", "--disable-setuid-sandbox"],
+	};
+
+	try {
+		puppeteer.use(StealthPlugin());
+		browser = await puppeteer.launch(puppeteerOptions);
+
+		if (!browser) return { browser: null, page: null, error: new Error("No browser") };
+		page = await browser.newPage();
+		if (!page) {
+			browser.close();
+			return { browser: null, page: null, error: new Error("No page") };
+		}
+
+		// Authenticate with ZenRows proxy
+		await page.authenticate({
+			username: ZENROWS_USERNAME,
+			password: ZENROWS_PASSWORD,
+		});
+
+		await page.setViewport({ width: 430, height: 932 });
+
+		await page.setRequestInterception(true);
+		page.on("request", (req) => {
+			if (
+				(!req.isInterceptResolutionHandled() && req.resourceType() === "image") ||
+				req.resourceType() === "font" ||
+				req.resourceType() === "media"
+			) {
+				return req.abort();
+			} else {
+				req.continue();
+			}
+		});
+
+		return { browser, page };
+	} catch (error) {
+		console.error("Error initializing ZenRows Puppeteer:", error);
+		if (browser) {
+			browser.close();
+		}
+		return { browser: null, page: null, error };
+	}
 }
 
 // puppeteer page pool
